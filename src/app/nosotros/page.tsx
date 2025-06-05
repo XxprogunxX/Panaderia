@@ -129,7 +129,7 @@ export default function NosotrosPage() {
           <div className="miembro-equipo">
             <div className="miembro-imagen">
               <Image
-                src="/images/panadero.jpg"
+                src="/images/panadero.avif"
                 alt="Don Javier Martínez - Fundador y Maestro Panadero"
                 width={500}
                 height={500}
@@ -146,7 +146,7 @@ export default function NosotrosPage() {
           <div className="miembro-equipo">
             <div className="miembro-imagen">
               <Image
-                src="/images/repostera.jpg"
+                src="/images/repostera.avif"
                 alt="Ana López - Jefa de Repostería"
                 width={500}
                 height={500}
@@ -163,7 +163,7 @@ export default function NosotrosPage() {
           <div className="miembro-equipo">
             <div className="miembro-imagen">
               <Image
-                src="/images/atencion-cliente.jpg"
+                src="/images/clientes.jpeg"
                 alt="Carlos Ramírez - Atención al Cliente"
                 width={500}
                 height={500}
