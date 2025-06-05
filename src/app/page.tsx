@@ -35,6 +35,7 @@ const Home = () => {
     { nombre: string; precio: number; cantidad: number }[]
   >([]);
   const [mostrarCarrito, setMostrarCarrito] = useState(false);
+  const [menuAbierto, setMenuAbierto] = useState(false);
 
   // Función para cargar los productos más vendidos
   useEffect(() => {
@@ -111,6 +112,10 @@ const Home = () => {
     setMostrarCarrito(!mostrarCarrito);
   }
 
+  const toggleMenu = () => {
+    setMenuAbierto(!menuAbierto);
+  };
+
   const total = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
 
   return (
@@ -126,24 +131,31 @@ const Home = () => {
           />
           <h1 className="logo">Panadería El Pan de Cada Día</h1>
         </div>
-        <nav className="nav">
-          <ul>
-            <li><Link href="/">Inicio</Link></li>
-            <li><Link href="/productos">Productos</Link></li>
-            <li><Link href="/cafe">Cafe</Link></li>
-            <li><Link href="/nosotros">Nosotros</Link></li>
-            <li><Link href="/login">Login</Link></li>
-            <li>
-              <button onClick={toggleCarrito} className="btn-carrito-toggle">
-  <span className="icono-carrito">🛒</span>
-  <span>Carrito</span>
-  {carrito.length > 0 && (
-    <span className="notificacion-carrito">
-      {carrito.reduce((sum, p) => sum + p.cantidad, 0)}
-    </span>
-  )}
-</button>
+        
+        <button className="menu-toggle" onClick={toggleMenu} aria-label="Toggle menu">
+          <span className={`hamburger ${menuAbierto ? 'active' : ''}`}></span>
+        </button>
 
+        <nav className={`nav ${menuAbierto ? 'nav-abierto' : ''}`}>
+          <ul>
+            <li><Link href="/" onClick={() => setMenuAbierto(false)}>Inicio</Link></li>
+            <li><Link href="/productos" onClick={() => setMenuAbierto(false)}>Productos</Link></li>
+            <li><Link href="/cafe" onClick={() => setMenuAbierto(false)}>Cafe</Link></li>
+            <li><Link href="/nosotros" onClick={() => setMenuAbierto(false)}>Nosotros</Link></li>
+            <li><Link href="/login" onClick={() => setMenuAbierto(false)}>Login</Link></li>
+            <li>
+              <button onClick={() => {
+                toggleCarrito();
+                setMenuAbierto(false);
+              }} className="btn-carrito-toggle">
+                <span className="icono-carrito">🛒</span>
+                <span>Carrito</span>
+                {carrito.length > 0 && (
+                  <span className="notificacion-carrito">
+                    {carrito.reduce((sum, p) => sum + p.cantidad, 0)}
+                  </span>
+                )}
+              </button>
             </li>
           </ul>
         </nav>
@@ -159,7 +171,9 @@ const Home = () => {
           <p>
             Desde hace más de 30 años, horneamos con pasión panes que conectan generaciones. Cada pieza cuenta una historia de tradición y sabor.
           </p>
-          <button>Explora nuestro catálogo</button>
+          <Link href="/productos" className="btn-explorar">
+            Explora nuestro catálogo
+          </Link>
           <h2 className="hashtag">#SABORQUESECOMPARTE</h2>
         </div>
 

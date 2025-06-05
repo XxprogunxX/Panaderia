@@ -21,7 +21,6 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
   box-shadow: 0 4px 10px rgba(0,0,0,0.15);
   position: sticky;
   top: 0;
@@ -44,15 +43,17 @@ body {
   transition: transform 0.3s ease;
 }
 
-.logo-img:hover {
-  transform: rotate(10deg) scale(1.05);
-}
-
 .logo {
   font-size: 1.8rem;
   font-weight: 700;
-  color: #D4A373; /* Ocre dorado */
+  color: #D4A373;
   text-shadow: 1px 1px 2px #3E2A1C;
+}
+
+/* Navegación */
+.nav {
+  display: flex;
+  align-items: center;
 }
 
 .nav ul {
@@ -61,6 +62,7 @@ body {
   gap: 2.5rem;
   padding: 0;
   margin: 0;
+  align-items: center;
 }
 
 .nav ul li a {
@@ -84,14 +86,162 @@ body {
   transition: width 0.3s ease;
 }
 
-.nav ul li a:hover,
-.nav ul li a:focus {
+.nav ul li a:hover {
   color: #D4A373;
 }
 
-.nav ul li a:hover::after,
-.nav ul li a:focus::after {
+.nav ul li a:hover::after {
   width: 100%;
+}
+
+/* Menú hamburguesa */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 1001;
+}
+
+.hamburger {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: #F4E8D4;
+  position: relative;
+  transition: all 0.3s ease-in-out;
+}
+
+.hamburger::before,
+.hamburger::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 2px;
+  background: #F4E8D4;
+  left: 0;
+  transition: all 0.3s ease-in-out;
+}
+
+.hamburger::before {
+  top: -8px;
+}
+
+.hamburger::after {
+  bottom: -8px;
+}
+
+.hamburger.active {
+  background: transparent;
+}
+
+.hamburger.active::before {
+  transform: rotate(45deg);
+  top: 0;
+}
+
+.hamburger.active::after {
+  transform: rotate(-45deg);
+  bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .logo-link-header {
+    margin-bottom: 0;
+  }
+
+  .menu-toggle {
+    display: block;
+    position: absolute;
+    right: 1rem;
+    top: 1.5rem;
+  }
+
+  .nav {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background: #4A3B31;
+    padding: 5rem 1.5rem 2rem;
+    transition: right 0.3s ease-in-out;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+    z-index: 1000;
+  }
+
+  .nav.nav-abierto {
+    display: block;
+    right: 0;
+  }
+
+  .nav ul {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .nav ul li {
+    opacity: 0;
+    transform: translateX(50px);
+    transition: all 0.3s ease-in-out;
+  }
+
+  .nav.nav-abierto ul li {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .nav ul li:nth-child(1) { transition-delay: 0.1s; }
+  .nav ul li:nth-child(2) { transition-delay: 0.2s; }
+  .nav ul li:nth-child(3) { transition-delay: 0.3s; }
+  .nav ul li:nth-child(4) { transition-delay: 0.4s; }
+  .nav ul li:nth-child(5) { transition-delay: 0.5s; }
+  .nav ul li:nth-child(6) { transition-delay: 0.6s; }
+
+  .nav ul li a {
+    display: block;
+    padding: 0.5rem 0;
+    font-size: 1.1rem;
+    text-align: left;
+    color: #F4E8D4;
+  }
+
+  .btn-carrito-toggle {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 0.8rem 1rem;
+    background: #C68E4D;
+    border-radius: 8px;
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 0.8rem;
+  }
+
+  .logo-img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .logo {
+    font-size: 1.2rem;
+  }
+
+  .nav {
+    width: 85%;
+    padding: 4rem 1rem 2rem;
+  }
 }
 
 /* Hero Section */
@@ -129,7 +279,7 @@ body {
   font-weight: 500;
 }
 
-.intro button {
+.btn-explorar {
   background-color: #C68E4D;
   color: white;
   padding: 0.85rem 2.5rem;
@@ -140,10 +290,12 @@ body {
   cursor: pointer;
   box-shadow: 0 6px 10px rgba(198, 142, 77, 0.7);
   transition: background-color 0.3s ease, transform 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
 }
 
-.intro button:hover,
-.intro button:focus {
+.btn-explorar:hover,
+.btn-explorar:focus {
   background-color: #9A3B3B;
   transform: scale(1.05);
 }
@@ -518,15 +670,15 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
-  .header {
+  .hero {
     flex-direction: column;
-    gap: 1rem;
+    padding: 2rem 1rem;
+    gap: 2rem;
   }
 
-  .nav ul {
-    flex-direction: column;
-    gap: 1rem;
+  .intro {
     text-align: center;
+    padding: 0 1rem;
   }
 
   .productos-grid {
@@ -1034,5 +1186,121 @@ body {
   color: #6e4b32;
   font-size: 0.9rem;
   font-weight: 500;
+}
+
+/* Ajustes responsivos para la página principal */
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    padding: 2rem 1rem;
+    gap: 2rem;
+  }
+
+  .intro {
+    text-align: center;
+    padding: 0 1rem;
+  }
+
+  .video-section {
+    width: 100%;
+    padding: 0;
+  }
+
+  .video-wrapper {
+    width: 100%;
+    margin: 0;
+    border-radius: 10px;
+  }
+
+  .video-panaderia {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+
+  .video-overlay-text {
+    width: 90%;
+    padding: 0.8rem 1rem;
+  }
+
+  .video-overlay-text h2 {
+    font-size: 1.2rem;
+  }
+
+  /* Ajustes para el header en móvil */
+  .header {
+    padding: 1rem;
+  }
+
+  .logo-link-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .nav ul {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .btn-carrito-toggle {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 1rem 0.5rem;
+  }
+
+  .intro h1 {
+    font-size: 2.5rem;
+  }
+
+  .intro p {
+    font-size: 1rem;
+  }
+
+  .video-wrapper {
+    border-radius: 8px;
+  }
+
+  .video-overlay-text {
+    bottom: 1rem;
+    padding: 0.6rem 0.8rem;
+  }
+
+  .video-overlay-text h2 {
+    font-size: 1rem;
+  }
+
+  .logo {
+    font-size: 1.4rem;
+  }
+}
+
+/* Ajustes para asegurar que el video sea responsivo */
+.video-section {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* Mantiene relación de aspecto 16:9 */
+}
+
+.video-panaderia {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 

@@ -123,53 +123,58 @@ export default function NosotrosPage() {
 
       <section className="equipo-section">
         <div className="equipo-header">
-          <h2>Conoce a Nuestro Equipo</h2>
-          <p>Los artesanos detrás de cada delicia</p>
+          <h2>Los artesanos detrás de cada delicia</h2>
         </div>
         <div className="equipo-grid">
           <div className="miembro-equipo">
             <div className="miembro-imagen">
               <Image
-                src="/images/maestro panadero.avif"
-                alt="Maestro panadero"
-                width={300}
-                height={300}
+                src="/images/panadero.jpg"
+                alt="Don Javier Martínez - Fundador y Maestro Panadero"
+                width={500}
+                height={500}
+                priority
+                quality={95}
               />
-              <div className="miembro-info">
-                <h3>Don Javier Martínez</h3>
-                <p>Fundador y Maestro Panadero</p>
-                <p className="miembro-desc">"La paciencia y el amor son los ingredientes secretos"</p>
-              </div>
+            </div>
+            <div className="miembro-info">
+              <h3>Don Javier Martínez</h3>
+              <p>Fundador y Maestro Panadero</p>
+              <p className="miembro-desc">La paciencia y el amor son los ingredientes secretos</p>
             </div>
           </div>
           <div className="miembro-equipo">
             <div className="miembro-imagen">
               <Image
-                src="/images/repostera.avif"
-                alt="Repostera"
-                width={300}
-                height={300}
+                src="/images/repostera.jpg"
+                alt="Ana López - Jefa de Repostería"
+                width={500}
+                height={500}
+                priority
+                quality={95}
               />
-              <div className="miembro-info">
-                <h3>Ana López</h3>
-                <p>Jefa de Repostería</p>
-                <p className="miembro-desc">"Cada postre cuenta una historia dulce"</p>
-              </div>
+            </div>
+            <div className="miembro-info">
+              <h3>Ana López</h3>
+              <p>Jefa de Repostería</p>
+              <p className="miembro-desc">Cada postre cuenta una historia dulce</p>
             </div>
           </div>
           <div className="miembro-equipo">
             <div className="miembro-imagen">
               <Image
-                src="/images/clientes.jpeg"
-                alt="Atención a clientes"
-                width={300}
-                height={300}
+                src="/images/atencion-cliente.jpg"
+                alt="Carlos Ramírez - Atención al Cliente"
+                width={500}
+                height={500}
+                priority
+                quality={95}
               />
-              <div className="miembro-info">
-                <h3>Carlos Ramírez</h3>
-                <p>Atención al Cliente</p>
-                <p className="miembro-desc">"Me encanta recomendar el pan perfecto para cada persona"</p>
-              </div>
+            </div>
+            <div className="miembro-info">
+              <h3>Carlos Ramírez</h3>
+              <p>Atención al Cliente</p>
+              <p className="miembro-desc">Me encanta recomendar el pan perfecto para cada persona</p>
             </div>
           </div>
         </div>

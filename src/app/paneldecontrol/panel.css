@@ -25,12 +25,13 @@ body {
 .container {
   display: flex;
   min-height: 100vh;
+  background-color: var(--background-light);
 }
 
 .panel-control {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  width: 100%;
 }
 
 .panel-header {
@@ -58,13 +59,10 @@ body {
 
 /* Sidebar Navigation */
 .tabs {
-  width: 250px;
-  background-color: var(--text-dark);
-  padding: 20px 0;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  background-color: var(--background-dark);
+  padding: 1rem;
+  gap: 1rem;
 }
 
 .tabs button {
@@ -94,9 +92,9 @@ body {
 
 /* Main Content */
 .tab-content {
-  flex-grow: 1;
-  padding: 30px;
-  background-color: var(--background-light);
+  flex: 1;
+  padding: 2rem;
+  overflow-x: hidden;
 }
 
 h2 {
@@ -119,7 +117,7 @@ h2 {
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
 }
 
 .form-group label {
@@ -133,10 +131,10 @@ h2 {
 .form-group input[type="number"],
 .form-group select,
 .form-group textarea {
-  width: calc(100% - 20px);
-  padding: 12px;
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 8px;
   border: 1px solid var(--border-color);
-  border-radius: 6px;
   font-size: 1em;
   transition: border-color 0.3s ease;
 }
@@ -155,17 +153,31 @@ h2 {
 }
 
 .imagen-preview {
-  margin-top: 15px;
   display: flex;
   align-items: center;
-  gap: 15px;
-  color: #555;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
-.imagen-preview img {
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+.imagen-preview img,
+.imagen-preview Image {
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.producto-imagen {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.producto-imagen img {
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+  object-fit: cover;
 }
 
 .form-actions {
@@ -177,14 +189,13 @@ h2 {
 .btn-primary,
 .btn-secondary,
 .btn-editar,
-.btn-eliminar {
-  padding: 12px 25px;
-  border: none;
+.btn-eliminar,
+.btn-whatsapp {
+  padding: 0.8rem 1.2rem;
   border-radius: 8px;
-  font-size: 1.05em;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-weight: 600;
 }
 
 .btn-primary {
@@ -211,9 +222,6 @@ h2 {
 .btn-editar {
   background-color: var(--accent-color);
   color: var(--text-light);
-  padding: 8px 15px;
-  font-size: 0.9em;
-  border-radius: 5px;
 }
 
 .btn-editar:hover:not(:disabled) {
@@ -224,9 +232,6 @@ h2 {
 .btn-eliminar {
   background-color: var(--danger-color);
   color: var(--text-light);
-  padding: 8px 15px;
-  font-size: 0.9em;
-  border-radius: 5px;
 }
 
 .btn-eliminar:hover:not(:disabled) {
@@ -265,34 +270,18 @@ h2 {
   gap: 30px;
 }
 
-.producto-card {
-  background-color: var(--text-light);
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+.producto-card,
+.usuario-card,
+.pedido-card {
+  background: white;
+  border-radius: 12px;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   transition: transform 0.3s ease;
 }
 
 .producto-card:hover {
-  transform: translateY(-5px);
-}
-
-.producto-imagen {
-  width: 100%;
-  height: 200px;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--background-dark);
-}
-
-.producto-imagen img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  transform: translateY(-4px);
 }
 
 .producto-info {
@@ -448,9 +437,9 @@ h2 {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+  right: 0;
+  bottom: 0;
+  background: rgba(255,255,255,0.9);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -458,24 +447,21 @@ h2 {
 }
 
 .cargando-contenido {
-  background-color: var(--text-light);
-  padding: 30px 50px;
-  border-radius: 10px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .spinner {
-  border: 6px solid var(--border-color);
-  border-top: 6px solid var(--primary-color);
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--primary-color);
   border-radius: 50%;
   width: 50px;
   height: 50px;
   animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
 }
 
 @keyframes spin {
@@ -575,41 +561,135 @@ h2 {
 }
 
 @media (max-width: 768px) {
-  .productos-grid,
-  .categorias-grid,
+  .container {
+    padding: 0.5rem;
+  }
+
+  .panel-control {
+    margin: 0;
+  }
+
+  .tabs {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 0.5rem;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 10;
+  }
+
+  .tabs button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    padding: 0.5rem 1rem;
+  }
+
+  .panel-header {
+    padding: 1rem;
+  }
+
+  .form {
+    padding: 1rem;
+  }
+
+  .productos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    padding: 0.5rem;
+  }
+
+  .producto-card {
+    min-height: auto;
+  }
+
+  .producto-imagen {
+    width: 100%;
+    height: 150px;
+  }
+
+  .producto-info {
+    padding: 0.8rem;
+  }
+
+  .producto-acciones {
+    flex-direction: row;
+    padding: 0.8rem;
+  }
+
+  .categorias-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+
   .usuarios-grid {
     grid-template-columns: 1fr;
   }
 
-  .producto-acciones, .usuario-acciones {
-    flex-direction: row;
-    justify-content: center;
-  }
-  
   .usuario-card {
     flex-direction: column;
+  }
+
+  .usuario-info {
+    flex-direction: column;
+    align-items: center;
     text-align: center;
   }
 
-  .usuario-avatar {
-    margin-bottom: 15px;
+  .estadisticas-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+  }
+
+  .productos-populares-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pedidos-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .pedido-card {
+    padding: 0.8rem;
+  }
+
+  .pedido-acciones {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .numero-guia-input {
+    width: 100%;
+  }
+
+  .estado-selector {
+    width: 100%;
+  }
+
+  .btn-whatsapp {
+    width: 100%;
   }
 }
 
 @media (max-width: 480px) {
   .panel-header h1 {
-    font-size: 1.8em;
+    font-size: 1.5rem;
   }
   .panel-header p {
     font-size: 0.9em;
   }
   .tabs button {
-    font-size: 0.9em;
-    padding: 8px 10px;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
   }
   .form-actions {
     flex-direction: column;
-    gap: 10px;
+    gap: 0.5rem;
+  }
+  .form-actions button {
+    width: 100%;
   }
 }
 

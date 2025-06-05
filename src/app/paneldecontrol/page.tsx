@@ -4,6 +4,7 @@ import { db } from "../firebaseConfig";
 import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { createClient } from '@supabase/supabase-js';
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
+import Image from 'next/image';
 import  "./panel.css"; // Importa el archivo CSS
 
 // Configura Supabase
@@ -632,10 +633,12 @@ const PanelControl = () => {
                   />
                   {nuevoProducto.imagenUrl && (
                     <div className="imagen-preview">
-                      <img 
+                      <Image 
                         src={nuevoProducto.imagenUrl} 
                         alt="Preview" 
-                        width="100"
+                        width={100}
+                        height={100}
+                        style={{ objectFit: 'cover' }}
                       />
                       <span>Imagen actual</span>
                     </div>
@@ -683,11 +686,13 @@ const PanelControl = () => {
                       <div key={producto.id} className="producto-card">
                         {producto.imagenUrl && (
                           <div className="producto-imagen">
-                            <img
+                            <Image
                               src={producto.imagenUrl}
                               alt={producto.nombre}
-                              width="200"
-                              height="200"
+                              width={200}
+                              height={200}
+                              style={{ objectFit: 'cover' }}
+                              priority
                             />
                           </div>
                         )}
