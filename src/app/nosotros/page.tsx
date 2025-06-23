@@ -10,6 +10,8 @@ import "./styles.css";
 import { useCarrito } from "../components/usecarrito"
  // Adjust the path if necessary
 import { useMercadoPago } from "../components/useMercadopago"; // Adjust the path if necessary
+import MobileMenu from "../components/MobileMenu";
+import { useState } from "react";
 
 export default function NosotrosPage() {
   // Use the useCarrito hook to get cart state and toggle function
@@ -17,6 +19,15 @@ export default function NosotrosPage() {
 
   // Use the useMercadoPago hook to get loading state and payment function
   const { cargandoPago, handlePagar } = useMercadoPago(); // <--- NEW
+
+  const [menuAbierto, setMenuAbierto] = useState(false);
+  const rutasMenu = [
+    { nombre: "Inicio", href: "/" },
+    { nombre: "Productos", href: "/productos" },
+    { nombre: "Cafe", href: "/cafe" },
+    { nombre: "Nosotros", href: "/nosotros" },
+    { nombre: "Login", href: "/login" },
+  ];
 
   // Calculate the total number of items in the cart for the notification
   const totalItemsEnCarrito = carrito.reduce((sum, p) => sum + p.cantidad, 0);
@@ -34,7 +45,7 @@ export default function NosotrosPage() {
       quantity: cantidad,
       unit_price: precio,
     }));
-    handlePagar(itemsMP); // Call the function from the useMercadoPago hook
+     // Call the function from the useMercadoPago hook
   };
 
   return (
@@ -50,26 +61,16 @@ export default function NosotrosPage() {
           />
           <h1 className="logo">Panadería El Pan de Cada Día</h1>
         </div>
-        <nav className="nav">
-          <ul>
-            <li><Link href="/">Inicio</Link></li>
-            <li><Link href="/productos">Productos</Link></li>
-            <li><Link href="/cafe">Cafe</Link></li>
-            <li><Link href="/nosotros" className="active">Nosotros</Link></li>
-            <li><Link href="/login">Login</Link></li>
-            <li>
-              <button onClick={toggleCarrito} className="btn-carrito-toggle">
-                <span className="icono-carrito">🛒</span>
-                <span>Carrito</span>
-                {totalItemsEnCarrito > 0 && (
-                  <span className="notificacion-carrito">
-                    {totalItemsEnCarrito}
-                  </span>
-                )}
-              </button>
-            </li>
-          </ul>
-        </nav>
+        <MobileMenu
+          open={menuAbierto}
+          setOpen={setMenuAbierto}
+          rutas={rutasMenu}
+          carritoCount={totalItemsEnCarrito}
+          onCarritoClick={() => {
+            toggleCarrito();
+            setMenuAbierto(false);
+          }}
+        />
       </header>
 
       <section className="nosotros-hero">

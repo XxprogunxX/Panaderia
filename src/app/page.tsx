@@ -10,6 +10,7 @@ import { image } from "framer-motion/client";
 import { url } from "inspector";
 import { db } from "./firebaseConfig";
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
+import MobileMenu from "./components/MobileMenu";
 
 interface Producto {
   nombre: string;
@@ -36,6 +37,14 @@ const Home = () => {
   >([]);
   const [mostrarCarrito, setMostrarCarrito] = useState(false);
   const [menuAbierto, setMenuAbierto] = useState(false);
+
+  const rutasMenu = [
+    { nombre: "Inicio", href: "/" },
+    { nombre: "Productos", href: "/productos" },
+    { nombre: "Cafe", href: "/cafe" },
+    { nombre: "Nosotros", href: "/nosotros" },
+    { nombre: "Login", href: "/login" },
+  ];
 
   // Función para cargar los productos más vendidos
   useEffect(() => {
@@ -112,10 +121,6 @@ const Home = () => {
     setMostrarCarrito(!mostrarCarrito);
   }
 
-  const toggleMenu = () => {
-    setMenuAbierto(!menuAbierto);
-  };
-
   const total = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
 
   return (
@@ -131,34 +136,16 @@ const Home = () => {
           />
           <h1 className="logo">Panadería El Pan de Cada Día</h1>
         </div>
-        
-        <button className="menu-toggle" onClick={toggleMenu} aria-label="Toggle menu">
-          <span className={`hamburger ${menuAbierto ? 'active' : ''}`}></span>
-        </button>
-
-        <nav className={`nav ${menuAbierto ? 'nav-abierto' : ''}`}>
-          <ul>
-            <li><Link href="/" onClick={() => setMenuAbierto(false)}>Inicio</Link></li>
-            <li><Link href="/productos" onClick={() => setMenuAbierto(false)}>Productos</Link></li>
-            <li><Link href="/cafe" onClick={() => setMenuAbierto(false)}>Cafe</Link></li>
-            <li><Link href="/nosotros" onClick={() => setMenuAbierto(false)}>Nosotros</Link></li>
-            <li><Link href="/login" onClick={() => setMenuAbierto(false)}>Login</Link></li>
-            <li>
-              <button onClick={() => {
-                toggleCarrito();
-                setMenuAbierto(false);
-              }} className="btn-carrito-toggle">
-                <span className="icono-carrito">🛒</span>
-                <span>Carrito</span>
-                {carrito.length > 0 && (
-                  <span className="notificacion-carrito">
-                    {carrito.reduce((sum, p) => sum + p.cantidad, 0)}
-                  </span>
-                )}
-              </button>
-            </li>
-          </ul>
-        </nav>
+        <MobileMenu
+          open={menuAbierto}
+          setOpen={setMenuAbierto}
+          rutas={rutasMenu}
+          carritoCount={carrito.reduce((sum, p) => sum + p.cantidad, 0)}
+          onCarritoClick={() => {
+            toggleCarrito();
+            setMenuAbierto(false);
+          }}
+        />
       </header>
 
       <section className="hero">

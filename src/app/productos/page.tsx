@@ -14,6 +14,7 @@ import { useCarrito } from "../components/usecarrito"
  // Adjust the path if necessary
 import { useMercadoPago } from "../components/useMercadopago"; 
 import FormularioEnvio from "../components/FormularioEnvio";
+import MobileMenu from "../components/MobileMenu";
 
 // Define la interfaz Producto si no está globalmente accesible
 interface Producto {
@@ -29,10 +30,18 @@ export default function Productos() {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [busqueda, setBusqueda] = useState("");
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [menuAbierto, setMenuAbierto] = useState(false);
 
   // Usa los hooks para manejar el estado del carrito y el proceso de pago
   const { carrito, agregarAlCarrito, eliminarDelCarrito, mostrarCarrito, toggleCarrito, total } = useCarrito(); // <--- Usa useCarrito
   const { cargandoPago, handlePagar } = useMercadoPago();                                                       // <--- Usa useMercadoPago
+
+  const rutasMenu = [
+    { nombre: "Inicio", href: "/" },
+    { nombre: "Productos", href: "/productos" },
+    { nombre: "Cafe", href: "/cafe" },
+    { nombre: "Nosotros", href: "/nosotros" },
+  ];
 
   useEffect(() => {
     const obtenerProductos = async () => {
@@ -90,25 +99,16 @@ export default function Productos() {
           <Image src="/images/logo.png" alt="Logo" width={60} height={60} className="logo-img" />
           <h1 className="logo">Panadería El Pan de Cada Día</h1>
         </div>
-        <nav className="nav">
-          <ul>
-            <li><Link href="/">Inicio</Link></li>
-            <li><Link href="/productos">Productos</Link></li>
-            <li><Link href="/cafe">Cafe</Link></li>
-            <li><Link href="/nosotros">Nosotros</Link></li>
-            <li>
-              <button onClick={toggleCarrito} className="btn-carrito-toggle">
-                <span className="icono-carrito">🛒</span>
-                <span>Carrito</span>
-                {carrito.length > 0 && (
-                  <span className="notificacion-carrito">
-                    {carrito.reduce((sum, p) => sum + p.cantidad, 0)}
-                  </span>
-                )}
-              </button>
-            </li>
-          </ul>
-        </nav>
+        <MobileMenu
+          open={menuAbierto}
+          setOpen={setMenuAbierto}
+          rutas={rutasMenu}
+          carritoCount={carrito.reduce((sum, p) => sum + p.cantidad, 0)}
+          onCarritoClick={() => {
+            toggleCarrito();
+            setMenuAbierto(false);
+          }}
+        />
       </header>
 
       <section className="productos-hero">

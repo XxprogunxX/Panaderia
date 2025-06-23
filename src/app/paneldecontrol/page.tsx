@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { db } from "../firebaseConfig";
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, query, orderBy, where } from "firebase/firestore";
 import { createClient } from '@supabase/supabase-js';
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import Image from 'next/image';
@@ -511,6 +511,75 @@ const PanelControl = () => {
       actualizarNumeroGuia(pedidoId, numeroGuia);
     }
   };
+
+  // Función para solicitar permiso de notificaciones
+  const requestNotificationPermission = async () => {
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        console.log("Notificaciones permitidas");
+      } else {
+        console.log("Permiso de notificaciones denegado");
+      }
+    } catch (error) {
+      console.error("Error al solicitar permiso de notificaciones:", error);
+    }
+  };
+
+  // Función para mostrar notificación
+  const showNotification = (pedido: Pedido) => {
+    if (Notification.permission === "granted") {
+      const productos = pedido.productos.map(p => `${p.nombre} x${p.cantidad}`).join(", ");
+      const notification = new Notification("¡Nuevo Pedido!", {
+        body: `Cliente: ${pedido.datosEnvio.nombre}\nProductos: ${productos}\nTotal: $${pedido.total.toFixed(2)} MXN`,
+        icon: "/logo.png", // Asegúrate de tener un logo en la carpeta public
+        badge: "/logo.png",
+        tag: pedido.id, // Evita duplicados
+        requireInteraction: true // La notificación permanece hasta que el usuario interactúe
+      });
+
+      // Manejar clic en la notificación
+      notification.onclick = () => {
+        window.focus(); // Enfoca la ventana
+        setActiveTab("estadisticas"); // Cambia a la pestaña de pedidos
+      };
+    }
+  };
+
+  // Escuchar nuevos pedidos
+  useEffect(() => {
+    // Solicitar permiso de notificaciones al montar el componente
+    requestNotificationPermission();
+
+    // Crear query para escuchar solo pedidos nuevos
+    const pedidosQuery = query(
+      collection(db, "pedidos"),
+      orderBy("fechaCreacion", "desc")
+    );
+
+    // Suscribirse a cambios en pedidos
+    const unsubscribe = onSnapshot(pedidosQuery, (snapshot) => {
+      const nuevosPedidos: Pedido[] = [];
+      
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === "added") {
+          const pedido = { id: change.doc.id, ...change.doc.data() } as Pedido;
+          nuevosPedidos.push(pedido);
+          
+          // Si no es la carga inicial (ya hay pedidos), mostrar notificación
+          if (pedidos.length > 0) {
+            showNotification(pedido);
+          }
+        }
+      });
+
+      // Actualizar lista de pedidos
+      setPedidos(prev => [...nuevosPedidos, ...prev]);
+    });
+
+    // Limpiar suscripción al desmontar
+    return () => unsubscribe();
+  }, []);
 
   if (cargando) {
     return (

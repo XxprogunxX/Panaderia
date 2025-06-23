@@ -1,0 +1,67 @@
+Necesito que me ayudes a desarrollar el marco teórico para mi tesina sobre un sistema de gestión web para una panadería. El sistema está desarrollado con las siguientes tecnologías y características:
+
+Tecnologías principales:
+- Next.js 15.3.2 para el frontend
+- React 19.0.0 como biblioteca principal
+- TypeScript para tipado estático
+- Firebase para backend y autenticación
+- Firestore como base de datos
+- Mercado Pago para procesamiento de pagos
+- Tailwind CSS para estilos
+
+Funcionalidades principales del sistema:
+1. Gestión de productos de panadería
+2. Sistema de carrito de compras
+3. Panel de administración
+4. Autenticación de usuarios
+5. Procesamiento de pagos
+6. Gestión de pedidos
+7. Diseño responsive
+
+Por favor, desarrolla un marco teórico completo que incluya:
+
+1. FUNDAMENTOS TEÓRICOS
+   - Sistemas de información
+   - Comercio electrónico
+   - Arquitectura de software web
+   - Metodologías de desarrollo
+
+2. TECNOLOGÍAS WEB
+   - Frontend frameworks
+   - Backend as a Service (BaaS)
+   - Bases de datos NoSQL
+   - APIs y servicios web
+
+3. GESTIÓN DE NEGOCIOS
+   - Sistemas de punto de venta
+   - Gestión de inventarios
+   - Procesamiento de pagos
+   - Servicio al cliente
+
+4. SEGURIDAD Y AUTENTICACIÓN
+   - Protocolos de seguridad web
+   - Sistemas de autenticación
+   - Protección de datos
+   - Cumplimiento normativo
+
+5. EXPERIENCIA DE USUARIO
+   - Diseño centrado en el usuario
+   - Interfaces responsivas
+   - Usabilidad web
+   - Arquitectura de información
+
+Por favor, para cada sección:
+1. Proporciona una introducción teórica
+2. Explica los conceptos fundamentales
+3. Relaciona la teoría con mi implementación específica
+4. Incluye referencias académicas relevantes
+5. Usa un lenguaje académico formal
+
+El marco teórico debe seguir el formato:
+- Títulos principales en mayúsculas
+- Subtítulos en formato título
+- Párrafos explicativos
+- Listas cuando sea necesario
+- Referencias en formato APA
+
+Importante: El contenido debe ser académico, bien fundamentado y enfocado en teorías y conceptos, no en implementación técnica específica. 

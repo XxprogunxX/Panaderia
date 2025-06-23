@@ -1,31 +1,33 @@
-/** @type {import('tailwindcss').Config} */
-import type { Config } from 'tailwindcss'
+import type { Config } from 'tailwindcss';
 
 const config: Config = {
   content: [
-    './app/**/*.{js,ts,jsx,tsx}',   // Rutas de archivos en la app
-    './pages/**/*.{js,ts,jsx,tsx}', // Rutas de páginas
-    './components/**/*.{js,ts,jsx,tsx}', // Rutas de componentes
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
       fontFamily: {
-        // Definición de las fuentes personalizadas
-        'Georgia': ['Georgia', 'serif'],
-        'Montserrat': ['Montserrat', 'sans-serif'],
-        'Playfair_Display': ['"Playfair Display"', 'serif'], // Nota las comillas para nombres con espacios
-        'Open_Sans': ['"Open Sans"', 'sans-serif'],           // Nota las comillas para nombres con espacios
+        Georgia: ['Georgia', 'serif'],
+        Montserrat: ['Montserrat', 'sans-serif'],
+        Playfair_Display: ['"Playfair Display"', 'serif'],
+        Open_Sans: ['"Open Sans"', 'sans-serif'],
       },
-      // Puedes añadir más extensiones aquí, como colores personalizados
       colors: {
-        'primary-brown': '#4b3a2f', // Ejemplo de un color primario basado en tu diseño
-        'light-cream': '#f9f5f1',   // Ejemplo de un color de fondo claro
-        'accent-warm': '#a1887f',   // Ejemplo de un color de acento cálido
-        'hero-bg': '#fceee3',       // Color de fondo de la sección hero
+        'primary-brown': '#4b3a2f',
+        'light-cream': '#f9f5f1',
+        'accent-warm': '#a1887f',
+        'hero-bg': '#fceee3',
       },
     },
   },
-  plugins: [],
-}
+  plugins: [
+    require('tailwindcss-filters'), // 👈 necesario para backdropFilter y blur
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
+    require('@tailwindcss/aspect-ratio'),
+  ],
+};
 
-export default config
+export default config;
