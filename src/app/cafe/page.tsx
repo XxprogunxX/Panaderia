@@ -3,6 +3,7 @@ import Image from 'next/image';
 import FancyButton from '../components/FancyButton';
 import Head from 'next/head';
 import ProductoCard from '../components/ProductoCard';
+import Link from 'next/link';
 
 export default function CafePage() {
   return (
@@ -16,17 +17,14 @@ export default function CafePage() {
           <nav className="navbar">
             {/* Contenedor para el logo y el nombre de la cafetería (parte izquierda de la navbar) */}
             <div className="navbar-brand-container"> {/* NUEVO CONTENEDOR */}
-              
-              <a href="/" className="nav-link logo-text">Cafetería</a> {/* El texto del nombre de la cafetería */}
+              <Link href="/" className="nav-link logo-text">Cafetería</Link> {/* El texto del nombre de la cafetería */}
             </div>
-
             {/* Links de navegación y (opcionalmente) el icono de búsqueda (parte derecha de la navbar) */}
             <div className="navbar-links-container"> {/* Renombrado para claridad */}
-              <a href="/" className="nav-link">Inicio</a> {/* Corregí el enlace a "Inicio" */}
-              <a href="#productos" className="nav-link">Productos</a>
-              <a href="/panaderia" className="nav-link">Panadería</a> {/* Asumo que tienes una página /panaderia */}
-              <a href="#testimonios" className="nav-link">Testimonios</a>
-
+              <Link href="/cafe" className="nav-link">Inicio</Link> {/* Corregí el enlace a "Inicio" */}
+              <Link href="/productoscafe" className="nav-link">Productos</Link>
+              <Link href="/panaderia" className="nav-link">Panadería</Link> {/* Asumo que tienes una página /panaderia */}
+              <Link href="#testimonios" className="nav-link">Testimonios</Link>
               <Image
                 src="/images/logo-cafe.png" // <--- RUTA DE TU LOGO DE CAFETERÍA
                 alt="Logo de la Cafetería"
@@ -34,11 +32,6 @@ export default function CafePage() {
                 height={50} // <--- AJUSTA EL TAMAÑO DE TU LOGO AQUÍ
                 className="navbar-logo-image" // NUEVA CLASE para estilizar la imagen del logo
               />
-              
-              {/* Opcional: Si quieres un icono de búsqueda a la derecha, mantén esto.
-                  Si no, simplemente quítalo. */}
-              
-              
             </div>
             {/* Para móviles, podrías añadir un botón de hamburguesa aquí y manejarlo con JS */}
           </nav>
