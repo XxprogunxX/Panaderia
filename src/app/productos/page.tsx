@@ -31,6 +31,7 @@ export default function Productos() {
   const [busqueda, setBusqueda] = useState("");
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [menuAbierto, setMenuAbierto] = useState(false);
+  const [cargando, setCargando] = useState(true);
 
   // Usa los hooks para manejar el estado del carrito y el proceso de pago
   const { carrito, agregarAlCarrito, eliminarDelCarrito, mostrarCarrito, toggleCarrito, total } = useCarrito(); // <--- Usa useCarrito
@@ -44,25 +45,31 @@ export default function Productos() {
   ];
 
   useEffect(() => {
-    const obtenerProductos = async () => {
-      const querySnapshot = await getDocs(collection(db, "productos"));
-      const lista: Producto[] = [];
-
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        lista.push({
-          nombre: data.product,
-          descripcion: data.description,
-          imagen: data.pic || "/images/default.jpg",
-          precio: data.price,
-          categoria: data.category,
+    const cargarProductos = async () => {
+      setCargando(true);
+      try {
+        const querySnapshot = await getDocs(collection(db, "productos"));
+        const lista: Producto[] = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data.category !== "Café") {
+            lista.push({
+              nombre: data.product,
+              descripcion: data.description,
+              imagen: data.pic || "/images/default.jpg",
+              precio: data.price,
+              categoria: data.category,
+            });
+          }
         });
-      });
-
-      setProductos(lista);
+        setProductos(lista);
+      } catch (error) {
+        // Puedes mostrar un error si lo deseas
+      } finally {
+        setCargando(false);
+      }
     };
-
-    obtenerProductos();
+    cargarProductos();
   }, []);
 
   const categoriasUnicas = [...new Set(productos.map((p) => p.categoria))];

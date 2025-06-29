@@ -64,7 +64,7 @@ type Usuario = {
 const PanelControl = () => {
   // Estados
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
-  const [activeTab, setActiveTab] = useState<"productos" | "categorias" | "usuarios" | "estadisticas">("productos");
+  const [activeTab, setActiveTab] = useState<"productos" | "categorias" | "usuarios" | "estadisticas" | "cafe">("productos");
   const [productos, setProductos] = useState<Producto[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
@@ -81,6 +81,19 @@ const PanelControl = () => {
   const [error, setError] = useState<string | null>(null);
   const [pedidosCargando, setPedidosCargando] = useState<{ [key: string]: boolean }>({});
   const [guiasTemporales, setGuiasTemporales] = useState<{ [key: string]: string }>({});
+  const [nuevoCafe, setNuevoCafe] = useState({
+    nombre: "",
+    precio: "",
+    descripcion: "",
+    imagen: null as File | null,
+    imagenUrl: "",
+    presentaciones: [] as { tamanio: string; stock: number }[],
+    molido: "",
+    tueste: "",
+  });
+  const [edicionCafeId, setEdicionCafeId] = useState<string | null>(null);
+  const [cafes, setCafes] = useState<any[]>([]);
+  const [presentacionTemp, setPresentacionTemp] = useState({ tamanio: "", stock: 0 });
 
   const cargarUsuarios = async () => {
     try {
@@ -181,6 +194,27 @@ const PanelControl = () => {
     } catch (error) {
       console.error("Error cargando pedidos:", error);
       setError("Error al cargar los pedidos");
+    }
+  };
+
+  // Cargar productos de café
+  useEffect(() => {
+    if (activeTab === "cafe") cargarCafes();
+  }, [activeTab]);
+
+  const cargarCafes = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "productos"));
+      const lista: any[] = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.category === "Café") {
+          lista.push({ id: doc.id, ...data });
+        }
+      });
+      setCafes(lista);
+    } catch (error) {
+      setError("Error al cargar los productos de café");
     }
   };
 
@@ -581,6 +615,117 @@ const PanelControl = () => {
     return () => unsubscribe();
   }, []);
 
+  // Agregar presentación
+  const agregarPresentacion = () => {
+    if (!presentacionTemp.tamanio.trim() || presentacionTemp.stock < 0) return;
+    setNuevoCafe((prev) => ({
+      ...prev,
+      presentaciones: [...prev.presentaciones, { ...presentacionTemp }],
+    }));
+    setPresentacionTemp({ tamanio: "", stock: 0 });
+  };
+
+  // Eliminar presentación
+  const eliminarPresentacion = (idx: number) => {
+    setNuevoCafe((prev) => ({
+      ...prev,
+      presentaciones: prev.presentaciones.filter((_, i) => i !== idx),
+    }));
+  };
+
+  // Guardar producto de café
+  const manejarSubmitCafe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    if (!nuevoCafe.nombre.trim() || !nuevoCafe.precio || isNaN(parseFloat(nuevoCafe.precio))) {
+      setError("Nombre y precio válidos requeridos");
+      return;
+    }
+    if (nuevoCafe.presentaciones.length === 0) {
+      setError("Agrega al menos una presentación");
+      return;
+    }
+    setCargando(true);
+    try {
+      let imagenUrl = nuevoCafe.imagenUrl;
+      if (nuevoCafe.imagen) {
+        imagenUrl = await subirImagen(nuevoCafe.imagen);
+      }
+      const cafeData = {
+        product: nuevoCafe.nombre.trim(),
+        price: parseFloat(nuevoCafe.precio),
+        category: "Café",
+        description: nuevoCafe.descripcion.trim(),
+        pic: imagenUrl,
+        presentaciones: nuevoCafe.presentaciones,
+        molido: nuevoCafe.molido,
+        tueste: nuevoCafe.tueste,
+        updatedAt: new Date().toISOString(),
+        ...(edicionCafeId ? {} : { createdAt: new Date().toISOString() })
+      };
+      if (edicionCafeId) {
+        await updateDoc(doc(db, "productos", edicionCafeId), cafeData);
+      } else {
+        await addDoc(collection(db, "productos"), cafeData);
+      }
+      setNuevoCafe({
+        nombre: "",
+        precio: "",
+        descripcion: "",
+        imagen: null,
+        imagenUrl: "",
+        presentaciones: [],
+        molido: "",
+        tueste: "",
+      });
+      setEdicionCafeId(null);
+      await cargarCafes();
+    } catch (error) {
+      setError("Error al guardar el café");
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  // Editar café
+  const editarCafe = (cafe: any) => {
+    setNuevoCafe({
+      nombre: cafe.product,
+      precio: cafe.price.toString(),
+      descripcion: cafe.description,
+      imagen: null,
+      imagenUrl: cafe.pic,
+      presentaciones: cafe.presentaciones || [],
+      molido: cafe.molido || "",
+      tueste: cafe.tueste || "",
+    });
+    setEdicionCafeId(cafe.id);
+    setError(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Eliminar café
+  const eliminarCafe = async (id: string, imagenUrl?: string) => {
+    if (!confirm("¿Estás seguro de eliminar este café permanentemente?")) return;
+    setCargando(true);
+    setError(null);
+    try {
+      if (imagenUrl) {
+        const pathStart = imagenUrl.indexOf('productos/');
+        if (pathStart !== -1) {
+          const filePath = imagenUrl.substring(pathStart);
+          await supabase.storage.from('imagenes-productos').remove([filePath]);
+        }
+      }
+      await deleteDoc(doc(db, "productos", id));
+      await cargarCafes();
+    } catch (error) {
+      setError("Error al eliminar el café");
+    } finally {
+      setCargando(false);
+    }
+  };
+
   if (cargando) {
     return (
       <div className="cargando-overlay">
@@ -600,6 +745,12 @@ const PanelControl = () => {
           className={activeTab === "productos" ? "active" : ""}
         >
           Productos
+        </button>
+        <button
+          onClick={() => setActiveTab("cafe")}
+          className={activeTab === "cafe" ? "active" : ""}
+        >
+          Café
         </button>
         <button
           onClick={() => setActiveTab("categorias")}
@@ -788,6 +939,125 @@ const PanelControl = () => {
                           >
                             Eliminar
                           </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "cafe" && (
+            <div className="cafe-tab">
+              <h2>Gestión de Café</h2>
+              {error && (
+                <div className="error-message">{error}</div>
+              )}
+              <form className="form" onSubmit={manejarSubmitCafe}>
+                <div className="form-group">
+                  <label>Nombre del Café *</label>
+                  <input type="text" value={nuevoCafe.nombre} onChange={e => setNuevoCafe({ ...nuevoCafe, nombre: e.target.value })} required />
+                </div>
+                <div className="form-group">
+                  <label>Precio (MXN) *</label>
+                  <input type="number" value={nuevoCafe.precio} onChange={e => setNuevoCafe({ ...nuevoCafe, precio: e.target.value })} required step="0.01" min="1" />
+                </div>
+                <div className="form-group">
+                  <label>Descripción</label>
+                  <textarea rows={3} value={nuevoCafe.descripcion} onChange={e => setNuevoCafe({ ...nuevoCafe, descripcion: e.target.value })} />
+                </div>
+                <div className="form-group">
+                  <label>Imagen</label>
+                  <input type="file" accept="image/jpeg, image/png, image/webp" onChange={e => {
+                    if (e.target.files && e.target.files[0]) setNuevoCafe({ ...nuevoCafe, imagen: e.target.files[0] });
+                  }} />
+                  {nuevoCafe.imagenUrl && (
+                    <div className="imagen-preview">
+                      <Image src={nuevoCafe.imagenUrl} alt="Preview" width={100} height={100} style={{ objectFit: 'cover' }} />
+                      <span>Imagen actual</span>
+                    </div>
+                  )}
+                  {nuevoCafe.imagen && (
+                    <div className="imagen-preview">
+                      <span>Nueva imagen seleccionada: {nuevoCafe.imagen.name}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="form-group">
+                  <label>Presentaciones</label>
+                  <div style={{display: 'flex', gap: '10px', marginBottom: '10px'}}>
+                    <input type="text" placeholder="Tamaño (ej. 1 kilo)" value={presentacionTemp.tamanio} onChange={e => setPresentacionTemp({ ...presentacionTemp, tamanio: e.target.value })} />
+                    <input type="number" placeholder="Stock" min="0" value={presentacionTemp.stock} onChange={e => setPresentacionTemp({ ...presentacionTemp, stock: parseInt(e.target.value) || 0 })} />
+                    <button type="button" onClick={agregarPresentacion}>Agregar</button>
+                  </div>
+                  <ul>
+                    {nuevoCafe.presentaciones.map((pres, idx) => (
+                      <li key={idx} style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
+                        <span>{pres.tamanio} - {pres.stock} unidades</span>
+                        <button type="button" onClick={() => eliminarPresentacion(idx)} style={{color: 'red'}}>Eliminar</button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="form-group">
+                  <label>Estado de Molido</label>
+                  <select value={nuevoCafe.molido} onChange={e => setNuevoCafe({ ...nuevoCafe, molido: e.target.value })}>
+                    <option value="">Selecciona</option>
+                    <option value="grano">Grano</option>
+                    <option value="molido fino">Molido Fino</option>
+                    <option value="molido medio">Molido Medio</option>
+                    <option value="molido grueso">Molido Grueso</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Tueste</label>
+                  <select value={nuevoCafe.tueste} onChange={e => setNuevoCafe({ ...nuevoCafe, tueste: e.target.value })}>
+                    <option value="">Selecciona</option>
+                    <option value="claro">Claro</option>
+                    <option value="medio">Medio</option>
+                    <option value="oscuro">Oscuro</option>
+                  </select>
+                </div>
+                <div className="form-actions">
+                  <button type="submit" className="btn-primary" disabled={cargando}>{edicionCafeId ? "Actualizar Café" : "Agregar Café"}</button>
+                  {edicionCafeId && (
+                    <button type="button" className="btn-secondary" onClick={() => {
+                      setEdicionCafeId(null);
+                      setNuevoCafe({ nombre: "", precio: "", descripcion: "", imagen: null, imagenUrl: "", presentaciones: [], molido: "", tueste: "" });
+                    }} disabled={cargando}>Cancelar</button>
+                  )}
+                </div>
+              </form>
+              <div className="productos-list">
+                <h3>Lista de Cafés</h3>
+                {cafes.length === 0 ? (
+                  <p>No hay productos de café registrados</p>
+                ) : (
+                  <div className="productos-grid">
+                    {cafes.map((cafe) => (
+                      <div key={cafe.id} className="producto-card">
+                        {cafe.pic && (
+                          <div className="producto-imagen">
+                            <Image src={cafe.pic} alt={cafe.product} width={200} height={200} style={{ objectFit: 'cover' }} priority />
+                          </div>
+                        )}
+                        <div className="producto-info">
+                          <h4>{cafe.product}</h4>
+                          <p className="precio">${parseFloat(cafe.price).toFixed(2)} MXN</p>
+                          <p className="categoria">{cafe.category}</p>
+                          <p className="descripcion">{cafe.description}</p>
+                          <ul>
+                            {cafe.presentaciones && cafe.presentaciones.map((pres: any, idx: number) => (
+                              <li key={idx}>{pres.tamanio} - {pres.stock} unidades</li>
+                            ))}
+                          </ul>
+                          <p><strong>Molido:</strong> {cafe.molido}</p>
+                          <p><strong>Tueste:</strong> {cafe.tueste}</p>
+                        </div>
+                        <div className="producto-acciones">
+                          <button onClick={() => editarCafe(cafe)} className="btn-editar" disabled={cargando}>Editar</button>
+                          <button onClick={() => eliminarCafe(cafe.id, cafe.pic)} className="btn-eliminar" disabled={cargando}>Eliminar</button>
                         </div>
                       </div>
                     ))}

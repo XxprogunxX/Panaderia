@@ -23,7 +23,7 @@ export default function CafePage() {
             <div className="navbar-links-container"> {/* Renombrado para claridad */}
               <Link href="/cafe" className="nav-link">Inicio</Link> {/* Corregí el enlace a "Inicio" */}
               <Link href="/productoscafe" className="nav-link">Productos</Link>
-              <Link href="/panaderia" className="nav-link">Panadería</Link> {/* Asumo que tienes una página /panaderia */}
+              <Link href="/" className="nav-link">Panadería</Link> {/* Asumo que tienes una página /panaderia */}
               <Link href="#testimonios" className="nav-link">Testimonios</Link>
               <Image
                 src="/images/logo-cafe.png" // <--- RUTA DE TU LOGO DE CAFETERÍA
