@@ -14,8 +14,13 @@ interface Producto {
   categoria: string;
 }
 
-interface ProductoConCantidad extends Producto {
+interface ProductoConCantidad {
+  nombre: string;
+  descripcion: string;
+  imagen: string;
+  precio: number;
   cantidad: number;
+  categoria: string;
 }
 
 // --- Hook useCarrito ---
@@ -43,49 +48,72 @@ export function useCarrito() {
   // Estado para controlar la visibilidad del overlay del carrito
   const [mostrarCarrito, setMostrarCarrito] = useState(false);
 
-  // 2. Persistencia del carrito en localStorage
-  // Este useEffect se ejecuta cada vez que el estado `carrito` cambia.
-  // Esto asegura que cualquier adición o eliminación se guarde.
+  // 2. Persistencia del carrito en localStorage con manejo de errores mejorado
   useEffect(() => {
     if (typeof window !== "undefined") {
-      try {
-        localStorage.setItem("carrito", JSON.stringify(carrito));
-      } catch (error) {
-        console.error("Error al guardar el carrito en localStorage:", error);
+      const saveToStorage = () => {
+        try {
+          localStorage.setItem("carrito", JSON.stringify(carrito));
+        } catch (error) {
+          console.error("Error al guardar el carrito en localStorage:", error);
+          // Si hay un error, intentamos limpiar el localStorage y guardar de nuevo
+          try {
+            localStorage.removeItem("carrito");
+            localStorage.setItem("carrito", JSON.stringify(carrito));
+          } catch (retryError) {
+            console.error("Error en el segundo intento de guardar:", retryError);
+          }
+        }
+      };
+
+      // Usar requestIdleCallback si está disponible, sino setTimeout
+      if (window.requestIdleCallback) {
+        window.requestIdleCallback(saveToStorage);
+      } else {
+        setTimeout(saveToStorage, 0);
       }
     }
-  }, [carrito]); // La dependencia `carrito` hace que se ejecute cuando el carrito cambia.
+  }, [carrito]);
 
   // --- Funciones del Carrito ---
 
-  const agregarAlCarrito = (producto: Producto) => {
-    setCarrito((prev) => {
-      const existe = prev.find((p) => p.nombre === producto.nombre);
-      if (existe) {
-        // Si el producto ya está, incrementa su cantidad
-        return prev.map((p) =>
-          p.nombre === producto.nombre ? { ...p, cantidad: p.cantidad + 1 } : p
+  const agregarAlCarrito = (producto: Omit<ProductoConCantidad, "cantidad">) => {
+    setCarrito((prevCarrito) => {
+      const productoExistente = prevCarrito.find((p) => p.nombre === producto.nombre);
+      
+      if (productoExistente) {
+        // Si el producto ya existe, incrementar la cantidad
+        return prevCarrito.map((p) =>
+          p.nombre === producto.nombre
+            ? { ...p, cantidad: p.cantidad + 1 }
+            : p
         );
       } else {
-        // Si el producto no está, añádelo con cantidad 1
-        return [...prev, { ...producto, cantidad: 1 }];
+        // Si es un producto nuevo, agregarlo con cantidad 1
+        return [...prevCarrito, { ...producto, cantidad: 1 }];
       }
     });
   };
 
   const eliminarDelCarrito = (nombre: string) => {
-    setCarrito((prev) => {
-      const productoExistente = prev.find((p) => p.nombre === nombre);
-      if (productoExistente && productoExistente.cantidad > 1) {
-        // Si hay más de una cantidad, decrementa
-        return prev.map((p) =>
-          p.nombre === nombre ? { ...p, cantidad: p.cantidad - 1 } : p
-        );
-      } else {
-        // Si es la última cantidad o no existe, elimínalo completamente
-        return prev.filter((p) => p.nombre !== nombre);
-      }
-    });
+    setCarrito((prevCarrito) => prevCarrito.filter((p) => p.nombre !== nombre));
+  };
+
+  const actualizarCantidad = (nombre: string, nuevaCantidad: number) => {
+    if (nuevaCantidad <= 0) {
+      eliminarDelCarrito(nombre);
+      return;
+    }
+
+    setCarrito((prevCarrito) =>
+      prevCarrito.map((p) =>
+        p.nombre === nombre ? { ...p, cantidad: nuevaCantidad } : p
+      )
+    );
+  };
+
+  const limpiarCarrito = () => {
+    setCarrito([]);
   };
 
   const toggleCarrito = () => {
@@ -93,7 +121,10 @@ export function useCarrito() {
   };
 
   // Cálculo del total del carrito
-  const total = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+  const total = carrito.reduce((sum, producto) => sum + producto.precio * producto.cantidad, 0);
+
+  // Calcular el número total de items
+  const totalItems = carrito.reduce((sum, producto) => sum + producto.cantidad, 0);
 
   // --- Retorno del Hook ---
   // El hook devuelve el estado y las funciones que los componentes necesitarán.
@@ -101,9 +132,12 @@ export function useCarrito() {
     carrito,
     agregarAlCarrito,
     eliminarDelCarrito,
+    actualizarCantidad,
+    limpiarCarrito,
     mostrarCarrito,
     toggleCarrito,
     total,
+    totalItems,
     // Opcional: `setCarrito` directo si necesitas un control más fino en algún componente
     // setCarrito,
   };

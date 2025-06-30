@@ -20,8 +20,9 @@ export default function LoginForm() {
       await createUserWithEmailAndPassword(auth, email, password);
       // Aquí puedes agregar el username a tu base de datos si es necesario
       router.push('/');
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+      setError(errorMessage);
       console.error('Error al registrar:', error);
     }
   };
@@ -32,8 +33,9 @@ export default function LoginForm() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       router.push('/paneldecontrol');
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+      setError(errorMessage);
       console.error('Error al iniciar sesión:', error);
     }
   };

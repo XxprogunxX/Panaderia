@@ -21,17 +21,20 @@ export default function PasswordReset() {
     try {
       await sendPasswordResetEmail(auth, email);
       setSuccess('Se ha enviado un correo para restablecer tu contraseña');
-    } catch (error: any) {
+    } catch (error: unknown) {
       let errorMessage = 'Error al enviar el correo';
-      switch (error.code) {
-        case 'auth/user-not-found':
-          errorMessage = 'Usuario no encontrado';
-          break;
-        case 'auth/invalid-email':
-          errorMessage = 'Correo electrónico inválido';
-          break;
-        default:
-          errorMessage = error.message;
+      if (error instanceof Error) {
+        const errorCode = (error as any).code;
+        switch (errorCode) {
+          case 'auth/user-not-found':
+            errorMessage = 'Usuario no encontrado';
+            break;
+          case 'auth/invalid-email':
+            errorMessage = 'Correo electrónico inválido';
+            break;
+          default:
+            errorMessage = error.message;
+        }
       }
       setError(errorMessage);
     } finally {

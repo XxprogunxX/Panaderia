@@ -1,9 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { db } from "../firebaseConfig";
 import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where } from "firebase/firestore";
 import { createClient } from '@supabase/supabase-js';
-import { getAuth, onAuthStateChanged, User } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "./panel.css"; // Importa el archivo CSS
 
 // Configura Supabase
@@ -34,7 +35,7 @@ type Usuario = {
   displayName: string | null;
   photoURL: string | null;
   emailVerified: boolean;
-  providerData: any[];
+  providerData: unknown[];
   createdAt?: string;
   updatedAt?: string;
   lastLogin?: string;
@@ -98,7 +99,7 @@ const PanelControl = () => {
     }
 
     return (
-      <img
+      <Image
         src={src}
         alt={alt}
         width={200}
