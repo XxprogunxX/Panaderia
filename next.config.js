@@ -22,9 +22,6 @@ const nextConfig = {
   },
   // Configuración para Render
   output: 'standalone',
-  experimental: {
-    outputFileTracingRoot: undefined,
-  },
   // Configuración de puerto
   serverRuntimeConfig: {
     port: process.env.PORT || 3000,
