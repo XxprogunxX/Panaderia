@@ -151,7 +151,7 @@ const PanelControl = () => {
   const limpiarUsuariosDuplicados = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "usuarios"));
-      const usuariosPorUid = new Map<string, any[]>();
+      const usuariosPorUid = new Map<string, unknown[]>();
       
       // Agrupar documentos por UID
       querySnapshot.forEach((doc) => {

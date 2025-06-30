@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import "../styles.css"; // Estilos generales
 import "./productos.css"; // Estilos específicos de productos
-import footerStyles from "../footer.module.css"; // Estilos específicos del footer
 import { useEffect, useState } from "react";
 import { db } from "../firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
@@ -125,11 +124,14 @@ export default function Productos() {
                     <div key={producto.nombre} className="producto-card">
                       <div className="producto-imagen-container">
                         {esImagenExterna(producto.imagen) ? (
-                          <img
+                          <Image
                             src={producto.imagen}
                             alt={producto.nombre}
+                            width={300}
+                            height={200}
                             className="producto-imagen"
                             style={{ objectFit: "cover" }}
+                            priority
                           />
                         ) : (
                           <Image
@@ -203,10 +205,6 @@ export default function Productos() {
           </div>
         </div>
       )}
-
-      <footer className={footerStyles.footer}>
-        {/* Aquí tu footer */}
-      </footer>
     </main>
   );
 }
